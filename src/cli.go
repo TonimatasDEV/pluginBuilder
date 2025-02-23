@@ -26,7 +26,7 @@ func InitCLI() {
 		case "build":
 			handleBuild(args)
 		case "plugins":
-			handlePlugins()
+			handlePlugins(args)
 		default:
 			Error("Unknown command. Use \"?\" or \"help\" for more information")
 		}
@@ -43,12 +43,12 @@ func handleHelp() {
 		"exit    -> Exits the CLI.\n" +
 		"help    -> Prints this help message.\n" +
 		"build   -> Build a premium plugin. Ex: build <page|ex:spigot> <id|ex:1234>\n" +
-		"plugins -> Prints all available plugins.")
+		"plugins -> Prints all available plugins. Ex: plugins <page|ex:spigot>")
 }
 
 func handleBuild(args []string) {
 	if len(args) < 2 {
-		Error("Missing arguments. Should be \"build <page|ex:spigot> <id|ex:1234>")
+		Error("Missing arguments. Should be \"build <page|ex:spigot> <id|ex:1234>\"")
 		return
 	}
 
@@ -66,6 +66,19 @@ func handleBuild(args []string) {
 	// TODO: Build logic
 }
 
-func handlePlugins() {
-	// TODO
+func handlePlugins(args []string) {
+	if len(args) < 1 {
+		Error("Missing arguments. Should be \"plugins <page|ex:spigot>\"")
+		return
+	}
+
+	if args[0] != "spigot" {
+		Error("For now, only exist: spigot")
+		return
+	}
+
+	Info("Current spigot plugin list:")
+	for id, data := range Plugins {
+		fmt.Println(fmt.Sprintf("Plugin \"%s\":\n - Spigot: %s\n - GitHub: %s", id, data.Spigot, data.GitHub))
+	}
 }
