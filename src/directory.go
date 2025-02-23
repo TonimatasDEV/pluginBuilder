@@ -28,7 +28,12 @@ func InitDirectories() {
 func getPluginDir(page, id string) string {
 	dir := programDir + "\\plugins\\" + page + "\\" + id
 
-	err := os.MkdirAll(dir, os.ModePerm)
+	err := os.RemoveAll(dir)
+	if err != nil {
+		utils.Fatal("Error deleting old directory of: " + id + err.Error())
+	}
+
+	err = os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
 		utils.Fatal("Error creating the " + id + " directory: " + err.Error())
 	}

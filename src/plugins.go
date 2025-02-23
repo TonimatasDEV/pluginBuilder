@@ -2,18 +2,21 @@ package src
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"pluginBuilder/src/utils"
 )
 
-const pluginGist = "https://gist.githubusercontent.com/TonimatasDEV/1e47502a243f938200a6354bdde65c4b/raw"
+const pluginGist = "https://gist.githubusercontent.com/TonimatasDEV/1e47502a243f938200a6354bdde65c4b/raw/list.json"
 
 var Plugins map[string]PluginData
 
 type PluginData struct {
 	Spigot string `json:"spigot"`
 	GitHub string `json:"github"`
+	Branch string `json:"branch"`
 }
 
 func InitPlugins() {
@@ -41,8 +44,9 @@ func InitPlugins() {
 
 func build(page, id string, data PluginData) {
 	dir := getPluginDir(page, id)
+	zip := data.GitHub + "/archive/refs/heads/" + data.Branch + ".zip"
 
-	err := utils.DownloadFile(data.GitHub+"/archive/refs/heads/main.zip", dir+"\\plugin.zip")
+	err := utils.DownloadFile(zip, dir+"\\plugin.zip")
 	if err != nil {
 		utils.Error("Error downloading the plugin repository. " + err.Error())
 		return
@@ -54,5 +58,22 @@ func build(page, id string, data PluginData) {
 		return
 	}
 
-	// TODO: Build logic
+	_, errGradlew := os.Stat(dir + "\\gradlew")
+
+	if !os.IsNotExist(errGradlew) {
+		err = BuildGradle(dir)
+	} else {
+		_, errMaven := os.Stat(dir + "\\pom.xml")
+
+		if !os.IsNotExist(errMaven) {
+			err = BuildMaven()
+		} else {
+			utils.Error("Unknown build system.")
+			return
+		}
+	}
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }
