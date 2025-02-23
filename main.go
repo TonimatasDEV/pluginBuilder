@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"pluginBuilder/src"
+	"pluginBuilder/src/utils"
 	"syscall"
 )
 
@@ -12,10 +13,10 @@ func main() {
 	stopSignal()
 
 	src.InitDirectories()
-	src.InitLogger()
+	utils.InitLogger()
 	src.InitPlugins()
 
-	src.Info("Plugin Builder initialized correctly.\nType \"?\" or \"help\" for more information.")
+	utils.Info("Plugin Builder initialized correctly.\nType \"?\" or \"help\" for more information.")
 
 	src.InitCLI()
 }
@@ -28,7 +29,7 @@ func stopSignal() {
 	go func() {
 		<-sigs
 		fmt.Print("\n")
-		src.Info("Stopping...")
+		utils.Info("Stopping...")
 		os.Exit(0)
 	}()
 }

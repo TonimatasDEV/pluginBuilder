@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"pluginBuilder/src/utils"
 )
 
 var (
@@ -18,18 +19,18 @@ func InitDirectories() {
 
 	programDir = usr.HomeDir + "\\AppData\\Local\\Programs\\PluginBuilder"
 
-	err = os.MkdirAll(programDir, 0777)
+	err = os.MkdirAll(programDir, os.ModePerm)
 	if err != nil {
-		Fatal("Error creating the program directory: " + err.Error())
+		utils.Fatal("Error creating the program directory: " + err.Error())
 	}
 }
 
-func getPluginDir(name string) string {
-	dir := programDir + "\\plugins\\" + name
+func getPluginDir(page, id string) string {
+	dir := programDir + "\\plugins\\" + page + "\\" + id
 
-	err := os.MkdirAll(dir, 0777)
+	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
-		Fatal("Error creating the " + name + " directory: " + err.Error())
+		utils.Fatal("Error creating the " + id + " directory: " + err.Error())
 	}
 
 	return dir
